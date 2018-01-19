@@ -2,7 +2,6 @@
 #' @description to remove ambiguous gene model and return gene model as genomic ranges object
 #' @param gtf gtf file to build gene model
 #' @export geneModel A genomic range list containing gene model
-
 ##helper function to remove ambiguous gene model and return gene model as genomic ranges object
 gtfToGeneModel = function(gtf){
 
@@ -33,14 +32,17 @@ gtfToGeneModel = function(gtf){
   single_strand_geneModel = geneModel[wantedGeneNames]
   ambi_geneModel = geneModel[ambiguious_genes]
   resol_ambi_geneModel = GRangesList()
-  for(i in 1: length(ambi_geneModel)){
+  if(length(ambiguious_genes) > 0 ){
+    for(i in 1: length(ambi_geneModel)){
     id = as.data.frame(findOverlaps(ambi_geneModel[[i]],resol_ambi_genes[names(ambi_geneModel)[i]][[1]]) )$queryHits
     newModel = GRangesList(ambi_geneModel[[i]][id])
     names(newModel) = names(ambi_geneModel)[i]
     if( all(match (as.character( seqnames(newModel[[1]]) ), wantedChrom,nomatch=0 )>0 ) ) {
       resol_ambi_geneModel = c(resol_ambi_geneModel,newModel)
+      }
     }
   }
+
 
   final_geneModel = c(single_strand_geneModel,resol_ambi_geneModel)
   seqlevels(final_geneModel) = wantedChrom
