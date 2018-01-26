@@ -18,18 +18,18 @@ setting.graph.attributes <- function(g, node.size=8,
   V(g)$size <- node.size
   V(g)$color <- node.color
   V(g)$label <- V(g)$name
-  
+
   E(g)$width=edege.width
   E(g)$color <- edege.color
-  
+
   return(g)
 }
 
 get.col.scale <- function(foldChange, DE.foldChange=TRUE) {
   FC.down <- foldChange[foldChange < 0]
   FC.up <- foldChange[foldChange >=0]
-  
-  
+
+
   if (DE.foldChange) {
     ## wether foldChange are only DE genes or whole gene sets.
     ## col.down <- cscale(FC.down, seq_gradient_pal("darkgreen", "green"))
@@ -48,7 +48,7 @@ scaleNodeColor <- function(g, foldChange, node.idx=NULL, DE.foldChange) {
   if (is.null(node.idx)) {
     node.idx <- 1:length(V(g))
   }
-  
+
   gn <- V(g)[node.idx]$name
   if(missing(DE.foldChange) || is.null(DE.foldChange)) {
     if (length(foldChange) > 2*length(gn)) {
@@ -58,7 +58,7 @@ scaleNodeColor <- function(g, foldChange, node.idx=NULL, DE.foldChange) {
     }
   }
   col.scale <- get.col.scale(foldChange, DE.foldChange)
-  
+
   V(g)[node.idx]$color <- col.scale[gn]
   V(g)[node.idx]$color[is.na(V(g)[node.idx]$color)] = "#B3B3B3"
   return(g)
@@ -89,17 +89,17 @@ netplot <- function(g,
       fc <- foldChange
       lbs <- hist(fc, breaks=col.bin-1, plot=FALSE)$breaks
       col.legend <- get.col.scale(lbs)
-      
+
       x <- seq(from=legend.x, by=0.03, length.out=length(col.legend))
       y <- rep(legend.y, length(col.legend))
       points(x, y, pch=15, col=col.legend, cex=2)
-      
+
       idx <- c(1, seq(4, length(col.legend)-1, by=3), length(col.legend))
       text(x=x[idx],
            y=rep(legend.y-0.05, length(idx)),
            label=lbs[idx],
            cex = 0.8)
-      
+
       text(x=mean(x),
            y=legend.y+0.05,
            labels="Fold Change",
@@ -123,7 +123,7 @@ cnetplot_internal <- function(inputList,
                               foldChange=NULL,
                               fixed=TRUE,
                               DE.foldChange = NULL, ...) {
-  
+
   if (is.numeric(showCategory)) {
     inputList <- inputList[1:showCategory]
     if (!is.null(pvalue)) {
@@ -135,25 +135,25 @@ cnetplot_internal <- function(inputList,
       pvalue <- pvalue[showCategory]
     }
   }
-  
+
   ## generate graph object
   g <- list2graph(inputList)
-  
+
   ## setting some attributes
   g <- setting.graph.attributes(g)
-  
+
   lengthOfCategory <- length(inputList)
-  
+
   ## scale node colors based on fold change
   if ( !is.null(foldChange) ) {
     node.idx <- (lengthOfCategory+1):length(V(g))
     g <- scaleNodeColor(g, foldChange, node.idx, DE.foldChange)
   }
-  
+
   ## attributes of Category Node
   V(g)[1:lengthOfCategory]$size=30  ## setting by default.
   V(g)[1:lengthOfCategory]$color= "#E5C494"
-  
+
   if(is.numeric(categorySize)) {
     V(g)[1:lengthOfCategory]$size=categorySize
   } else {
@@ -169,13 +169,17 @@ cnetplot_internal <- function(inputList,
       V(g)[1:lengthOfCategory]$size <- pScore/sum(pScore) * 100
     }
   }
-  
+
   netplot(g=g,foldChange=foldChange, fixed=fixed, ...)
 }
 
 #################
 # main function #
 #################
+#' @title cnetplot.enrichResult
+#' @param x The dataframe of enrichment analysis result
+#' @param showCategory The number of enriched term to show
+#' @param categorySize column name of x that used to scale the GO term. defult is "pvalue" scale the categorySize by enrichment pvalue
 cnetplot.enrichResult <- function(x,
                                   showCategory = 5,
                                   categorySize = "pvalue",
@@ -188,29 +192,29 @@ cnetplot.enrichResult <- function(x,
 #  } else {
 #    stop("x should be an 'enrichResult' or 'gseaResult' object...")
 # }
-  gc <-  strsplit(x$geneID,",") 
-  
+  gc <-  strsplit(x$geneID,",")
+
 #  if ("pvalue" %in% names(res)) {
     y <- res[, c( "Description", "pvalue")]
 #  } else {
 #    y <- res[res$ID %in% names(gc),
  #            c("ID", "Description")]
-    
+
 #  }
-  
+
   names(gc) <- y$Description
-  
+
   if ( is.numeric(showCategory) && (showCategory > length(gc)) ) {
     showCategory = length(gc)
   }
-  
+
   if (categorySize == "pvalue") {
     pvalue <- y$pvalue
     names(pvalue) <- y$Description
   } else {
     pvalue <- NULL
   }
-  
+
 #  readable <- x@readable
 #  organism <- x@organism
   if ( (!is.null(foldChange) ) ){
