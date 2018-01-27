@@ -139,6 +139,6 @@ countReads<-function(
 
   colnames(reads) <- c(paste(samplenames,"input",sep = "-"),paste(samplenames,"IP",sep = "-"))
 
-  saveRDS(windowCounts.input,paste(outputDir,"m6Amonter_readCounts.RDS"))
+  saveRDS(windowCounts.input,paste(outputDir,"/m6Amonter_readCounts.RDS"))
   return(reads)
 }
