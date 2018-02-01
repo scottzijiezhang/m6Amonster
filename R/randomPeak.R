@@ -5,7 +5,7 @@ randomPeaks = function(size,gtf){
   geneModel = gtfToGeneModel(gtf)
   no.genes = length(geneModel)
   bed12=data.frame() # initiate the bed12 data frame to store the peaks
-
+  pb <-  txtProgressBar(min = 1, max = no.genes, style = 3)
   for(i in 1:no.genes){
     # DNA location to gene location conversion
     df.geneModel= as.data.frame(reduce(geneModel[i][[1]]) )##data frame of gene model
@@ -39,7 +39,7 @@ randomPeaks = function(size,gtf){
       colnames(peaks.dna)=c("chr","start","end","strand")
       peak.gr = makeGRangesFromDataFrame( peaks.dna )
       for(j in 1:no.peak.to.sample){
-        tmp = intersect(peak.gr[j],reduce(geneModel[i][[1]]) )
+        tmp = GenomicRanges::intersect(peak.gr[j],reduce(geneModel[i][[1]]) )
         bed.tmp = data.frame(matrix(nrow=1,ncol=12))
         colnames(bed.tmp)=c("chr","start","end","name","score","strand","thickStart","thickEnd","itemRgb","blockCount","blockSize","blockStart")
         bed.tmp["chr"] = unique(as.character(seqnames(tmp)))
@@ -57,7 +57,7 @@ randomPeaks = function(size,gtf){
 
     }
 
-    print(i)
+    setTxtProgressBar(pb, i)
   }
   return(bed12)
 }
