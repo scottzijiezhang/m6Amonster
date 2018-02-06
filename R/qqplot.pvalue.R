@@ -24,16 +24,22 @@ qqplot.pvalue <- function(x){
     grp = thin$grp
     pvalues <- thin$pvalues
     exp.x <- thin$exp.x
-    qq.melt <- data.frame(expected=exp.x, Observed = pvalues, grp = grp)
-    ggplot(data = qq.melt, aes(expected, Observed,colour = grp) )+geom_point(size = 0.5)+geom_abline(slope = 1)+xlab("Expected(-log10 p-value)")+ylab("Observed(-log10 p-value)")
+    qq.melt <- data.frame(expected=exp.x, Observed = pvalues, label = grp)
+    ggplot(data = qq.melt, aes(expected, Observed,colour = label) )+geom_point(size = 0.5)+geom_abline(slope = 1)+xlab("Expected(-log10 p-value)")+ylab("Observed(-log10 p-value)")+
+      theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
   }else{
     expected <- -log10(seq(0,1,1/(length(x)-1 ) ))
     p <- -log10(sort(x))
-    
+
     ## remove some
-    tail <- which(p>quantile(x,0.75) ) 
-    head <-seq(1,length(which(p<=quantile(x,0.75) )),10 ) 
+    tail <- which(p>quantile(x,0.75) )
+    head <-seq(1,length(which(p<=quantile(x,0.75) )),10 )
     qq.data <- data.frame(expected=c(expected[head],expected[tail]), Observed=c(p[head],p[tail]) )
-    ggplot(data = qq.data, aes(expected, Observed) )+geom_point(size = 0.5,colour = "blue")+geom_abline(slope = 1)+xlab("Expected(-log10 p-value)")+ylab("Observed(-log10 p-value)")
+    ggplot(data = qq.data, aes(expected, Observed) )+geom_point(size = 0.5,colour = "blue")+geom_abline(slope = 1)+xlab("Expected(-log10 p-value)")+ylab("Observed(-log10 p-value)")+
+      theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                         panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
   }
 }

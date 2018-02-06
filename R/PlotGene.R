@@ -11,7 +11,10 @@ plotGene <- function(IP_BAM, INPUT_BAM, size.IP, size.INPUT, geneName, geneModel
   IP.cov <- getAveCoverage(geneModel= geneModel,bamFiles = IP_BAM,geneName = geneName,size.factor = size.IP, libraryType = libraryType, center = center, ZoomIn = ZoomIn)
   INPUT.cov <- getAveCoverage(geneModel= geneModel,bamFiles = INPUT_BAM,geneName = geneName,size.factor = size.INPUT, libraryType = libraryType, center = center,ZoomIn = ZoomIn)
   cov.data <- data.frame(IP=IP.cov,Input=INPUT.cov,genome_location=as.numeric(names(IP.cov) ) )
-  ggplot(data = cov.data,aes(genome_location))+geom_line(aes(y=Input,colour ="Input"))+geom_line(aes(y=IP,colour="IP"))+labs(y="normalized coverage")+scale_x_continuous(breaks = round(seq(min(cov.data$genome_location), max(cov.data$genome_location), by = ((max(cov.data$genome_location)-min(cov.data$genome_location))/10) ),1))
+  ggplot(data = cov.data,aes(genome_location))+geom_line(aes(y=Input,colour ="Input"))+geom_line(aes(y=IP,colour="IP"))+labs(y="normalized coverage")+scale_x_continuous(breaks = round(seq(min(cov.data$genome_location), max(cov.data$genome_location), by = ((max(cov.data$genome_location)-min(cov.data$genome_location))/10) ),1))+
+    theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                       panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
 }
 
 
@@ -37,7 +40,9 @@ plotGenePair <- function(Ctl_IP_BAM,Ctl_INPUT_BAM,Treat_IP_BAM,Treat_INPUT_BAM,C
   cov.data <- data.frame(Ctl_IP=Ctl_IP.cov, Ctl_Input = Ctl_INPUT.cov,
                          Treat_IP=Treat_IP.cov, Treat_Input = Treat_INPUT.cov,
                          genome_location=as.numeric(names(Ctl_IP.cov) ) )
-  ggplot(data = cov.data,aes(genome_location))+geom_line(aes(y=Ctl_Input,colour ="Ctl Input"))+geom_line(aes(y=Treat_IP,colour="Treat IP"))+geom_line(aes(y=Treat_Input,colour ="Treat Input"))+geom_line(aes(y=Ctl_IP,colour="Ctl IP"))+labs(y="normalized coverage")+scale_x_continuous(breaks = round(seq(min(cov.data$genome_location), max(cov.data$genome_location), by = ((max(cov.data$genome_location)-min(cov.data$genome_location))/10) ),1))
+  ggplot(data = cov.data,aes(genome_location))+geom_line(aes(y=Ctl_Input,colour ="Ctl Input"))+geom_line(aes(y=Treat_IP,colour="Treat IP"))+geom_line(aes(y=Treat_Input,colour ="Treat Input"))+geom_line(aes(y=Ctl_IP,colour="Ctl IP"))+labs(y="normalized coverage")+scale_x_continuous(breaks = round(seq(min(cov.data$genome_location), max(cov.data$genome_location), by = ((max(cov.data$genome_location)-min(cov.data$genome_location))/10) ),1))+
+    theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                       panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 }
 
 ## helper function to get average coverage of a gene of multiple samples
