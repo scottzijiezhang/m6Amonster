@@ -23,8 +23,8 @@ countReads<-function(
   strandToKeep = "opposite",
   threads = 1
 ){
-#  library(Rsamtools)
-#  library(GenomicFeatures)
+  #  library(Rsamtools)
+  #  library(GenomicFeatures)
   ##read bam files
   bamPath.input = paste(bamFolder,"/",samplenames,".input.bam",sep="")
   bamPath.IP = paste(bamFolder,"/",samplenames,".",modification,".bam",sep="")
@@ -55,11 +55,6 @@ countReads<-function(
   cat("Gene model obtained from gtf file...\n")
 
   no.genes=length(geneGRList)## define number of genes
-
-  windowCounts.IP = data.frame() ## initiate a data frame to store matrix of continuous window reads counts
-  windowCounts.input = data.frame() ## initiate a data frame to store matrix of continuous window reads counts
-
-  geneRNA2DNA = data.frame()## initiate a list to store RNA2DNA mapping info for each gene model
 
   cat("counting reads for each genes, this step may takes a few hours....\n")
   start_time <- Sys.time()
@@ -139,6 +134,12 @@ countReads<-function(
 
   colnames(reads) <- c(paste(samplenames,"input",sep = "-"),paste(samplenames,"IP",sep = "-"))
 
-  saveRDS(windowCounts.input,paste(outputDir,"/m6Amonter_readCounts.RDS"))
-  return(reads)
+  saveRDS(reads,paste0(outputDir,"/RNADMethyl_readCounts.RDS"))
+
+
+  data.out <- list('reads' = reads,'binSize' = binSize,'geneModel' = geneGRList,
+                   'bamPath.input' = bamPath.input, 'bamPath.ip' = bamPath.IP,
+                   'samplenames' = samplenames)
+
+  return(data.out)
 }
