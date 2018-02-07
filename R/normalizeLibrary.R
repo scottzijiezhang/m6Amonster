@@ -1,22 +1,29 @@
 #' @title normalizeLibrary
-#' @param reads Read counts matrix from countReads() function.
-#' @param samplenames A vector of Samples names. Needs to be the same as the one input to countReads()
+#' @param readsOut Read counts data list from countReads() function.
 #' @param X Study design or Grouping for the samples, should have 2 levels
 #' @export norm_lib returns the list of normalized reads, study design and gene-bin names
-normalizeLibrary <- function(reads,samplenames,X){
-  input <- reads[,1:length(samplenames)]
-  m6A <- reads[,(1+length(samplenames)):(2*length(filenames))]
+normalizeLibrary <- function(readsOut,X){
 
-  ## split gene and bin names
-  aa <- strsplit(rownames(input), ",")
-  gene.name <- unlist(lapply(aa, function(x){
-    return(x[1])
-  }))
-  bin.name <- unlist(lapply(aa, function(x){
-    return(x[2])
-  }))
-  geneBins <- data.frame(gene=gene.name,bin=bin.name)
-  rownames(geneBins) <- rownames(input)
+  input <- readsOut$reads[,1:length(readsOut$samplenames)]
+  m6A <- readsOut$reads[,(1+length(readsOut$samplenames)):(2*length(readsOut$samplenames))]
+  colnames(input) <- colnames(m6A) <- readsOut$samplenames
+
+  ## check if geneBins already exist
+  if( "geneBins" %in% names(readsOut) ){
+    geneBins <- readsOut$geneBins
+  }else{
+    ## split gene and bin names
+    aa <- strsplit(rownames(input), ",")
+    gene.name <- unlist(lapply(aa, function(x){
+      return(x[1])
+    }))
+    bin.name <- unlist(lapply(aa, function(x){
+      return(x[2])
+    }))
+    geneBins <- data.frame(gene=gene.name,bin=bin.name)
+    rownames(geneBins) <- rownames(input)
+  }
+
   ## Get input geneSum (gene level quantification)
   geneSum <- NULL
   for(i in 1:ncol(input) ){
@@ -24,7 +31,7 @@ normalizeLibrary <- function(reads,samplenames,X){
     gene.sum <- tapply(y,gene.name,sum)
     geneSum <- cbind(geneSum,gene.sum)
   }
-  colnames(geneSum) <- filenames
+  colnames(geneSum) <- readsOut$samplenames
 
   size.input <- DESeq2::estimateSizeFactorsForMatrix(geneSum)
 
@@ -43,13 +50,24 @@ normalizeLibrary <- function(reads,samplenames,X){
   size.enrich.deseq2 <- DESeq2::estimateSizeFactorsForMatrix(enrich[,1:length(X)])
 
   norm.ip <-t( t(m6A)/size.enrich.deseq2 )
+  sizeFactor <- data.frame(input=size.input,ip=size.enrich.deseq2)
+  ## check if geneBins already exist
+  if( "geneBins" %in% names(readsOut) ){
+    norm_lib <- c(readsOut, list('geneSum'=round(geneSum.norm),
+                                 'norm.input'=norm.input,
+                                 'norm.ip'=norm.ip,
+                                 'sizeFactor'=sizeFactor,
+                                 'X'=X)
+  }else{
+    norm_lib <- c(readsOut, list('geneSum'=round(geneSum.norm),
+                                 'norm.input'=norm.input,
+                                 'norm.ip'=norm.ip,
+                                 'sizeFactor'=sizeFactor,
+                                 'geneBins'=geneBins,
+                                 'X'=X)
+  }
 
-  monster <- list('geneSum'=geneSum.norm,
-                  'norm.input'=norm.input,
-                  'norm.ip'=norm.ip,
-                  'sizeFactor'=sizeFactor,
-                  'geneBins'=geneBins,
-                  'X'=X)
+  )
 
-  return(monster)
+  return(norm_lib)
 }

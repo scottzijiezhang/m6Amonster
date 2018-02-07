@@ -134,12 +134,11 @@ countReads<-function(
 
   colnames(reads) <- c(paste(samplenames,"input",sep = "-"),paste(samplenames,"IP",sep = "-"))
 
-  saveRDS(reads,paste0(outputDir,"/RNADMethyl_readCounts.RDS"))
-
-
   data.out <- list('reads' = reads,'binSize' = binSize,'geneModel' = geneGRList,
                    'bamPath.input' = bamPath.input, 'bamPath.ip' = bamPath.IP,
                    'samplenames' = samplenames)
 
+  saveRDS(data.out,paste0(outputDir,"/m6Amonster_readCounts.RDS"))
   return(data.out)
+
 }
