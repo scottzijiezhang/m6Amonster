@@ -58,6 +58,7 @@ normalizeLibrary <- function(readsOut,X){
                                  'norm.ip'=norm.ip,
                                  'sizeFactor'=sizeFactor,
                                  'X'=X)
+    )
   }else{
     norm_lib <- c(readsOut, list('geneSum'=round(geneSum.norm),
                                  'norm.input'=norm.input,
@@ -65,9 +66,60 @@ normalizeLibrary <- function(readsOut,X){
                                  'sizeFactor'=sizeFactor,
                                  'geneBins'=geneBins,
                                  'X'=X)
+    )
   }
 
-  )
+
 
   return(norm_lib)
+}
+
+
+#' @title normalizePeak
+#' @param readsOut Read counts data list from countReads() function.
+#' @param X Study design or Grouping for the samples, should have 2 levels
+#' @export
+normalizePeak <- function(readsOut,X){
+
+  ## load data from input
+  jointPeak_ip <- readsOut$jointPeak_ip
+  jointPeak_input <- readsOut$jointPeak_input
+  input <- readsOut$reads[,1:length(readsOut$samplenames)]
+  colnames(input) <- readsOut$samplenames
+  geneBins <- readsOut$geneBins
+
+  ## Get input geneSum (gene level quantification)
+  geneSum <- NULL
+  for(i in 1:ncol(input) ){
+    y <- input[,i]
+    gene.sum <- tapply(y,geneBins$gene,sum)
+    geneSum <- cbind(geneSum,gene.sum)
+  }
+  colnames(geneSum) <- readsOut$samplenames
+
+  size.input <- DESeq2::estimateSizeFactorsForMatrix(geneSum)
+
+  norm.jointPeak_input <-t( t(jointPeak_input) / size.input )
+  geneSum.norm <- t ( t(geneSum)/size.input)
+
+  ## Get the gene level input count for corresponding peaks
+  geneCounts.peak <- geneSum.norm[geneBins[rownames(norm.jointPeak_input),"gene"],]
+  enrich <- as.data.frame(jointPeak_ip/geneCounts.peak)
+  enrich <- enrich[!apply(enrich,1, function(x){any(is.na(x)) | any(is.infinite(x))}),]
+
+  size.enrich.deseq2 <- DESeq2::estimateSizeFactorsForMatrix(enrich[,1:length(X)])
+
+  norm.jointPeak_ip <-t( t(jointPeak_ip)/size.enrich.deseq2 )
+  sizeFactor <- data.frame(input=size.input,ip=size.enrich.deseq2)
+
+  if("geneSum" %in% names(readsOut) ){
+    data.out <- c(readsOut, list('norm.jointPeak_ip'=norm.jointPeak_ip))
+  }else{
+    data.out <- c(readsOut, list('geneSum'=round(geneSum.norm),
+                               'norm.jointPeak_ip'=norm.jointPeak_ip,
+                               'sizeFactor'=sizeFactor,
+                               'X'=X))
+  }
+
+  return(data.out)
 }
