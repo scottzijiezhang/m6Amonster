@@ -2,14 +2,14 @@
 % Please edit documentation in R/reportPoissonGammaMerge.R
 \name{reportPoissonGammaMerge}
 \alias{reportPoissonGammaMerge}
-\title{reportMergeBin}
+\title{reportPoissonGammaMerge}
 \usage{
-reportPoissonGammaMerge(stats, geneGRList, cutoff, binSize = 50)
+reportPoissonGammaMerge(x, cutoff, est = "auto")
 }
 \arguments{
-\item{stats}{read count mattrix}
-
-\item{geneGRList}{GRange List of gene model from gtfToGeneModel(). Or gtf file.}
+\item{x}{The RNADMethyl data list}
 
 \item{cutoff}{The p_value cutoff to merge the bin}
+
+\item{est}{By default "auto", the function takes estimates from given The RNADMethyl data list. One can also pass a test estimates by assigning it to stats.}
 }

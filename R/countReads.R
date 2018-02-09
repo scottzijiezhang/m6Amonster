@@ -5,7 +5,7 @@
 #' @param samplenames The names of each sample (prefix for bam files)
 #' @param gtf The gtf format gene annotation file
 #' @param shift Number of bp to shift when counting the reads. This is usually half of the fragment length.
-#' @param modification
+#' @param modification The postfix of IP sample bam file. For example "IP" for s1.IP.bam and "m6A" for s1.m6A.bam.
 #' @param bamFolder Path to the folder where bam file locates
 #' @param binSize The size of consecutive bins to slice the transcripts
 #' @param threads The number of threads to use for hyperthreading

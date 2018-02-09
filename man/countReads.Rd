@@ -19,6 +19,8 @@ countReads(samplenames, gtf, shift = 75, bamFolder, outputDir = NA,
 
 \item{outputDir}{The directory to save output files}
 
+\item{modification}{The postfix of IP sample bam file. For example "IP" for s1.IP.bam and "m6A" for s1.m6A.bam.}
+
 \item{binSize}{The size of consecutive bins to slice the transcripts}
 
 \item{strandToKeep}{According to library preparation protocol, choose which strand to count. Stranded RNA library usually seq the "ooposite" strand. Small RNA library seq the "same" strand.}

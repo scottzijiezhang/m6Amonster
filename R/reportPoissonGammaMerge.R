@@ -1,26 +1,36 @@
-#' @title reportMergeBin
-#' @param stats read count mattrix
-#' @param geneGRList GRange List of gene model from gtfToGeneModel(). Or gtf file.
+#' @title reportPoissonGammaMerge
+#' @param x The RNADMethyl data list
 #' @param cutoff The p_value cutoff to merge the bin
-reportPoissonGammaMerge <- function(stats,
-                                    geneGRList,
+#' @param est By default "auto", the function takes estimates from given The RNADMethyl data list. One can also pass a test estimates by assigning it to stats.
+reportPoissonGammaMerge <- function(x,
                                     cutoff,
-                                    binSize = 50
-                                    ){
+                                    est = "auto"
+){
 
-  cat("getting significant bins....\n")
+  if( !is.matrix(est) & !is.data.frame(est) ){
+    if(est == "auto"){
+      stats <- x$all.est
+    }else{ stop("Cannot recognize parameter est...") }
+  }else if(all(c("p_value","beta","padj") %in% colnames(est)) | all(c("p_value3","beta1","padj") %in% colnames(est)) ){
+    stats <- est
+  }else{
+    stop("The est must have column named p_value beta and padj ")
+  }
+
+
+  cat("Getting significant bins....\n")
 
   if("p_value" %in% colnames(stats)){
-    sig.bins <- rownames(stats[stats[,"p_value"] < cutoff ,])
+    sig.bins <- rownames(stats[stats[,"padj"] < cutoff ,])
   }else if("p_value3" %in% colnames(stats) ){
-    sig.bins <- rownames(stats[stats[,"p_value3"] < cutoff ,])
+    sig.bins <- rownames(stats[stats[,"padj"] < cutoff ,])
     colnames(stats)[which(colnames(stats) == "p_value3")] = "p_value"
     colnames(stats)[which(colnames(stats) == "beta1")] = "beta"
   }else{
     stop("Cannot find p value column in the given Stats...\n")
   }
 
-  ## Get the gene names of significant
+  ## Get the gene names of significant bins
   aa <- strsplit(sig.bins, ",")
   gene.name <- unique(unlist(lapply(aa, function(x){
     return(x[1])
@@ -28,7 +38,7 @@ reportPoissonGammaMerge <- function(stats,
 
   cat(paste("Reporting ",length(sig.bins)," bins in ",length(gene.name)," genes...\n"))
   ## Get the gene and continuous bins for significant bins
-  geneBins <- .getGeneBins(geneGRList,gene.name,binSize )
+  geneBins <- .getGeneBins(x$geneModel,gene.name,x$binSize )
   rownames(geneBins) <- paste(geneBins$geneName,geneBins$slidingStart,sep = ",")
   geneBins$diff <- FALSE
   geneBins[sig.bins,"diff"] <- TRUE
@@ -62,7 +72,7 @@ reportPoissonGammaMerge <- function(stats,
     merged.report<- foreach( p = 1:num_peaks, .combine = rbind)%dopar%{
       peak_row_id <- peak_id_pairs[p,]
       tmp=GRanges(seqnames = geneBins$chr[peak_row_id[1]] , ranges = IRanges(geneBins$start[peak_row_id[1]],geneBins$end[peak_row_id[2]]),strand = geneBins$strand[peak_row_id[1]])
-      tmp=GenomicRanges::intersect(tmp,geneGRList[geneBins$geneName[peak_row_id[1]]][[1]])
+      tmp=GenomicRanges::intersect(tmp,x$geneModel[geneBins$geneName[peak_row_id[1]]][[1]])
       data.frame(chr=geneBins$chr[peak_row_id[1]],
                  start = geneBins$start[peak_row_id[1]],
                  end = geneBins$end[peak_row_id[2]],
@@ -77,7 +87,7 @@ reportPoissonGammaMerge <- function(stats,
                  blockStarts = paste(as.data.frame(tmp)[,2] - replicate(length(tmp),geneBins$start[peak_row_id[1]]),collapse=","),
                  logFC = min( stats[rownames(geneBins[peak_row_id[1]:peak_row_id[2],]), "beta"] ),
                  p_value = .fishersMethod(  stats[rownames(geneBins[peak_row_id[1]:peak_row_id[2],]), "p_value"] )
-                 )
+      )
     }
     rm(list=ls(name=foreach:::.foreachGlobals), pos=foreach:::.foreachGlobals)
     end_time <- Sys.time()
