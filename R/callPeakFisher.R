@@ -20,7 +20,7 @@ callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , p
     bin.name <- unlist(lapply(aa, function(x){
       return(x[2])
     }))
-    geneBins <- data.frame(gene=gene.name,bin=bin.name)
+    geneBins <- data.frame(gene=gene.name,bin=as.integer(bin.name))
     rownames(geneBins) <- rownames(input)
   }
 
