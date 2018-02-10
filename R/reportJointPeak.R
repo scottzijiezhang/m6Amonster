@@ -11,7 +11,6 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
     stats <- readsOut$all.est.peak
     geneGRList <- readsOut$geneModel
     peakGenes <- as.character(readsOut$geneBins[peak_id_pairs[,1],"gene"])
-    geneBins <- .getGeneBins(geneGRList,peakGenes,readsOut$binSize )
     ##
     if("p_value3" %in% colnames(stats)){ colnames(stats)[which(colnames(stats) == "p_value3")] = "p_value"}
 
@@ -25,19 +24,18 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
       cat(paste("Using",getDoParWorkers(),"thread(s) to report merged report...\n"))
       merged.report<- foreach( p = 1:num_peaks, .combine = rbind)%dopar%{
         peak_row_id <- peak_id_pairs[p,]
-        #tmp=GRanges(seqnames = geneBins$chr[peak_row_id[1]] , ranges = IRanges(geneBins$start[peak_row_id[1]],geneBins$end[peak_row_id[2]]),strand = geneBins$strand[peak_row_id[1]])
-        geneExons <- geneGRList[geneBins$geneName[peak_row_id[1]]][[1]]
-        peak <- data.frame(chr =geneBins$chr[peak_row_id[1]],start = geneBins$start[peak_row_id[1]], end = geneBins$end[peak_row_id[2]] )
-        #tmp=GenomicRanges::intersect(tmp,geneExons)
+        geneExons <- geneGRList[peakGenes[p]][[1]]
+
+        peak <- .getPeakBins(geneGRList,peakGenes[p],c(readsOut$geneBins$bin[peak_row_id[1]],readsOut$geneBins$bin[peak_row_id[2]]),readsOut$binSize )
         peakE <- .peakExons(peak,as.data.frame(geneExons))
-        data.frame(chr=geneBins$chr[peak_row_id[1]],
-                   start = geneBins$start[peak_row_id[1]],
-                   end = geneBins$end[peak_row_id[2]],
-                   name = as.character(geneBins$geneName[peak_row_id[1]]),
+        data.frame(chr=peak$chr,
+                   start = peak$start,
+                   end = peak$end,
+                   name = peakGenes[p],
                    score = 0,
-                   strand = geneBins$strand[peak_row_id[1]],
-                   thickStart = geneBins$start[peak_row_id[1]],
-                   thickEnd = geneBins$end[peak_row_id[2]],
+                   strand = as.character(strand(geneExons))[1],
+                   thickStart = peak$start,
+                   thickEnd = peak$end,
                    itemRgb=0,
                    blockCount = nrow(peakE),
                    blockSizes = paste(peakE$width,collapse=","),
@@ -77,8 +75,8 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
     peak_id_pairs <- cbind(start_id, end_id)
 
     geneGRList <- readsOut$geneModel
-    peakGenes <- as.character(readsOut$geneBins[peak_id_pairs[,1],"gene"])
-    geneBins <- .getGeneBins(geneGRList,peakGenes,readsOut$binSize )
+    peakGenes <- as.character(geneBins[peak_id_pairs[,1],"gene"])
+    #geneBins <- .getGeneBins(geneGRList,peakGenes,readsOut$binSize )
 
     if (num_peaks == 0){return(data.frame())
     }else {
@@ -88,19 +86,19 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
       cat(paste("Using",getDoParWorkers(),"thread(s) to report merged report...\n"))
       merged.report<- foreach( p = 1:num_peaks, .combine = rbind)%dopar%{
         peak_row_id <- peak_id_pairs[p,]
-        #tmp=GRanges(seqnames = geneBins$chr[peak_row_id[1]] , ranges = IRanges(geneBins$start[peak_row_id[1]],geneBins$end[peak_row_id[2]]),strand = geneBins$strand[peak_row_id[1]])
-        geneExons <- geneGRList[geneBins$geneName[peak_row_id[1]]][[1]]
-        peak <- data.frame(chr =geneBins$chr[peak_row_id[1]],start = geneBins$start[peak_row_id[1]], end = geneBins$end[peak_row_id[2]] )
+        geneExons <- geneGRList[peakGenes[p]][[1]]
+
+        peak <- .getPeakBins(geneGRList,peakGenes[p],c(geneBins$bin[peak_row_id[1]],geneBins$bin[peak_row_id[2]]),readsOut$binSize )
+
         peakE <- .peakExons(peak,as.data.frame(geneExons))
-        #tmp=GenomicRanges::intersect(tmp,geneGRList[geneBins$geneName[peak_row_id[1]]][[1]])
-        data.frame(chr=geneBins$chr[peak_row_id[1]],
-                   start = geneBins$start[peak_row_id[1]],
-                   end = geneBins$end[peak_row_id[2]],
-                   name = as.character(geneBins$geneName[peak_row_id[1]]),
+        data.frame(chr=peak$chr,
+                   start = peak$start,
+                   end = peak$end,
+                   name = peakGenes[p],
                    score = 0,
-                   strand = geneBins$strand[peak_row_id[1]],
-                   thickStart = geneBins$start[peak_row_id[1]],
-                   thickEnd = geneBins$end[peak_row_id[2]],
+                   strand = as.character(strand(geneExons))[1],
+                   thickStart = peak$start,
+                   thickEnd = peak$end,
                    itemRgb=0,
                    blockCount = nrow(peakE),
                    blockSizes = paste(peakE$width,collapse=","),
