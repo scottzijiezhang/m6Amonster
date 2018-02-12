@@ -73,7 +73,7 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
     if (ID[num_lines]==TRUE) {end_id <- c(end_id,num_lines)} # if the last checkpoint bin is peak
 
     peak_id_pairs <- cbind(start_id, end_id)
-
+    num_peaks <- nrow(peak_id_pairs)
     geneGRList <- readsOut$geneModel
     peakGenes <- as.character(geneBins[peak_id_pairs[,1],"gene"])
     #geneBins <- .getGeneBins(geneGRList,peakGenes,readsOut$binSize )
@@ -81,7 +81,7 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
     if (num_peaks == 0){return(data.frame())
     }else {
       start_time <- Sys.time()
-      registerDoParallel(cores = 4)
+      registerDoParallel(cores = threads)
       cat(paste("Hyper-thread registered:",getDoParRegistered(),"\n"))
       cat(paste("Using",getDoParWorkers(),"thread(s) to report merged report...\n"))
       merged.report<- foreach( p = 1:num_peaks, .combine = rbind)%dopar%{

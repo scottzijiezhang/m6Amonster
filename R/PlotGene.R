@@ -78,3 +78,29 @@ getCov <- function(bf,locus, libraryType ){
   cov[res$pos-locus$start+1] <- res$count
   return(cov)
 }
+
+#' @title plotGeneMonster
+#' @param readsOut The data list from countReads and other analysis.
+plotGeneMonster <- function(readsOut, geneName, libraryType = "opposite", center = "mean",ZoomIn = NULL){
+  if("X" %in% names(readsOut) ){
+    plotGenePair(Ctl_IP_BAM = readsOut$bamPath.ip[factor(X) == levels(factor(X))[1]],
+                 Ctl_INPUT_BAM = readsOut$bamPath.input[factor(X) == levels(factor(X))[1]],
+                 Treat_IP_BAM = readsOut$bamPath.ip[factor(X) == levels(factor(X))[2]],
+                 Treat_INPUT_BAM = readsOut$bamPath.input[factor(X) == levels(factor(X))[2]],
+                 Ctl_size.IP = readsOut$sizeFactor$ip[factor(X) == levels(factor(X))[1]],
+                 Ctl_size.INPUT = readsOut$sizeFactor$input[factor(X) == levels(factor(X))[1]],
+                 Treat_size.IP = readsOut$sizeFactor$ip[factor(X) == levels(factor(X))[2]],
+                 Treat_size.INPUT = readsOut$sizeFactor$input[factor(X) == levels(factor(X))[2]],
+                 geneName = geneName,
+                 geneModel = readsOut$geneModel,
+                 libraryType = libraryType,center = center,ZoomIn = ZoomIn )
+  }else{
+    plotGene(IP_BAM = readsOut$bamPath.ip,
+             INPUT_BAM =  readsOut$bamPath.input,
+             size.IP = readsOut$sizeFactor$ip,
+             size.INPUT = readsOut$sizeFactor$input,
+             geneName = geneName,
+             geneModel = readsOut$geneModel,
+             libraryType = libraryType,center = center,ZoomIn = ZoomIn)
+  }
+}

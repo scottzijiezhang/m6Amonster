@@ -5,8 +5,8 @@
 #' @param peak_cutoff_oddRatio The minimal oddRatio of fisher's exact test to call peak.
 #' @param threads The number of threads to use. Default uses 1 threads.
 callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , peak_cutoff_oddRatio = 1, threads = 1){
-  input <- readsOut$reads[,1:length(readsOut$samplenames)]
-  m6A <- readsOut$reads[,(1+length(readsOut$samplenames)):(2*length(readsOut$samplenames))]
+  input <- as.matrix(readsOut$reads[,1:length(readsOut$samplenames)])
+  m6A <- as.matrix(readsOut$reads[,(1+length(readsOut$samplenames)):(2*length(readsOut$samplenames))])
   colnames(input) <- colnames(m6A) <- readsOut$samplenames
   ## check if geneBins already exist
   if( "geneBins" %in% names(readsOut) ){
