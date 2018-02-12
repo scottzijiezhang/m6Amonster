@@ -83,6 +83,7 @@ getCov <- function(bf,locus, libraryType ){
 #' @param readsOut The data list from countReads and other analysis.
 plotGeneMonster <- function(readsOut, geneName, libraryType = "opposite", center = "mean",ZoomIn = NULL){
   if("X" %in% names(readsOut) ){
+    X <- readsOut$X
     plotGenePair(Ctl_IP_BAM = readsOut$bamPath.ip[factor(X) == levels(factor(X))[1]],
                  Ctl_INPUT_BAM = readsOut$bamPath.input[factor(X) == levels(factor(X))[1]],
                  Treat_IP_BAM = readsOut$bamPath.ip[factor(X) == levels(factor(X))[2]],
