@@ -24,7 +24,7 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
       cat(paste("Using",getDoParWorkers(),"thread(s) to report merged report...\n"))
       merged.report<- foreach( p = 1:num_peaks, .combine = rbind)%dopar%{
         peak_row_id <- peak_id_pairs[p,]
-        geneExons <- geneGRList[peakGenes[p]][[1]]
+        geneExons <- reduce( geneGRList[peakGenes[p]][[1]] )
 
         peak <- .getPeakBins(geneGRList,peakGenes[p],c(readsOut$geneBins$bin[peak_row_id[1]],readsOut$geneBins$bin[peak_row_id[2]]),readsOut$binSize )
         peakE <- .peakExons(peak,as.data.frame(geneExons))
@@ -86,7 +86,7 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
       cat(paste("Using",getDoParWorkers(),"thread(s) to report merged report...\n"))
       merged.report<- foreach( p = 1:num_peaks, .combine = rbind)%dopar%{
         peak_row_id <- peak_id_pairs[p,]
-        geneExons <- geneGRList[peakGenes[p]][[1]]
+        geneExons <- reduce ( geneGRList[peakGenes[p]][[1]] )
 
         peak <- .getPeakBins(geneGRList,peakGenes[p],c(geneBins$bin[peak_row_id[1]],geneBins$bin[peak_row_id[2]]),readsOut$binSize )
 
@@ -125,6 +125,6 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
     peakexon <- y[exonID,]
     peakexon[1,"start"] <- peak$start
     peakexon[sum(exonID),"end"] <- peak$end
-    return(data.frame(start = peakexon$start, end = peakexon$end, width = peakexon$end - peakexon$start))
+    return(data.frame(start = peakexon$start, end = peakexon$end, width = peakexon$end - peakexon$start + 1))
   }
 }
