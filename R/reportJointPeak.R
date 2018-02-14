@@ -109,6 +109,7 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
       end_time <- Sys.time()
       cat(paste("Time used to report peaks:",difftime(end_time, start_time, units = "mins"),"mins... \n"))
     }
+
     return( merged.report )
 
   }
