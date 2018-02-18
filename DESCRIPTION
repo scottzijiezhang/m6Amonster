@@ -9,6 +9,5 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-imports: 
 Depends: GenomicFeatures, Rsamtools, ggplot2, doParallel, foreach,grid
 RoxygenNote: 6.0.1
