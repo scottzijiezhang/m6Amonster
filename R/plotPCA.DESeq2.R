@@ -1,3 +1,8 @@
+#' @title plotPCA.DESeq2
+#' @description Takes a matrix and regularize transform the data using DESeq2::rlog function. Then plot PCA using the DESeq2.
+#' @param data The data matrix
+#' @param group The label of each column of the data.
+#' @export
 plotPCA.DESeq2 <- function(data,group = NULL, returnPC = FALSE){
   if(is.null(group)){
     colData <- data.frame(group=colnames(data))
@@ -20,6 +25,10 @@ plotPCA.DESeq2 <- function(data,group = NULL, returnPC = FALSE){
 
 }
 
+#' @title plotPCAfromMatrix
+#' @param m The data matrix
+#' @param group The label to group samples
+#' @export
 plotPCAfromMatrix <- function(m,group){
 
   pc <- prcomp(t(m))

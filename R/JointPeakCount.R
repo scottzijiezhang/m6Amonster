@@ -1,6 +1,7 @@
 #' @title JointPeakCount
 #' @param readsOut The data list as output of callPeakFisher()
 #' @param joint_threshold Require a bin to be called as a peak in joint_threshold number of samples to be a joint peak.
+#' @export
 JointPeakCount <- function(readsOut, joint_threshold = 2 ){
 
   if(!"peakCallResult" %in% names(readsOut)){

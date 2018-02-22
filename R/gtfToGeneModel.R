@@ -1,7 +1,8 @@
 #' @title gtfToGeneModel
 #' @description to remove ambiguous gene model and return gene model as genomic ranges object
 #' @param gtf gtf file to build gene model
-#' @export geneModel A genomic range list containing gene model
+#' @return geneModel A genomic range list containing gene model
+#' @export
 ##helper function to remove ambiguous gene model and return gene model as genomic ranges object
 gtfToGeneModel = function(gtf){
 

@@ -1,3 +1,6 @@
+#' @title qqplot.pvalue
+#' @param x can be a vector (p value of one group) or a list of vector (p value of multiple groups).
+#' @export
 qqplot.pvalue <- function(x){
   library(ggplot2)
   if(is.list(x)){

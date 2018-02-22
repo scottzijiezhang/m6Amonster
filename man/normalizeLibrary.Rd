@@ -11,3 +11,6 @@ normalizeLibrary(readsOut, X)
 
 \item{X}{Study design or Grouping for the samples, should have 2 levels}
 }
+\value{
+norm_lib returns the list of normalized reads, study design and gene-bin names
+}

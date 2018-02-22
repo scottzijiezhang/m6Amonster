@@ -20,3 +20,6 @@ diffIP(x, Covariates = NULL, plotPvalue = TRUE, p.adjBy = "fdr",
 
 \item{maxPsi}{The cutoff value for random effect parameter Psi estimation}
 }
+\value{
+x The RNADMethyl data list with estimators
+}

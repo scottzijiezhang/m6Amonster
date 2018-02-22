@@ -3,6 +3,7 @@
 #' @param adjustBy By default, adjust post-IP count by INPUT geneSum. Can also choose "pos" to use current position count to adjust for expression level.
 #' @param mode Running "bin" mode or "peak" mode.
 #' @return  x The data list now with IP-count adjusted for expression level added
+#' @export
 adjustExprLevel <- function(x,adjustBy = "geneSum",mode){
 
   if(mode == "bin"){

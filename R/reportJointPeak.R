@@ -3,6 +3,7 @@
 #' @param joint_threshold Define the number of sample required to have consistent peak in a locus to call joint peak.
 #'  This option is useful only when joint poeak has not been reported by jointPeakCount().
 #' @return merged.report The joint peak of merged bins.
+#' @export
 reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
   if("all.est.peak" %in% names(readsOut) & "peakCallResult"%in% names(readsOut)){
     cat("Reporting joint peak with PoissonGamma test statistics...\n")

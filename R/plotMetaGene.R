@@ -1,6 +1,7 @@
 #' @title plotMetaGene
 #' @param peak the data frame of peak in bed12 format.
 #' @param gtf The annotation file.
+#' @export
 plotMetaGene <- function(peak,gtf){
   feature <- list('peak'=.peakToGRangesList(peak) )
   txdb <- makeTxDbFromGFF(gtf,format = "gtf")

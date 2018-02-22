@@ -4,14 +4,14 @@
 \alias{peakDistribution}
 \title{gtfToGeneModel}
 \usage{
-peakDistribution(bedFile, gtf, saveName = NA)
+peakDistribution(peak, gtf, saveName = NA)
 }
 \arguments{
-\item{bedFile}{peak list as bed format}
-
 \item{gtf}{gtf file to build gene model}
 
 \item{saveName}{the file name to save ditribution plot}
+
+\item{bedFile}{peak list as bed format}
 }
 \description{
 to remove ambiguous gene model and return gene model as genomic ranges object

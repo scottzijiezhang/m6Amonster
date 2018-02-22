@@ -1,7 +1,8 @@
 #' @title normalizeLibrary
 #' @param readsOut Read counts data list from countReads() function.
 #' @param X Study design or Grouping for the samples, should have 2 levels
-#' @export norm_lib returns the list of normalized reads, study design and gene-bin names
+#' @return norm_lib returns the list of normalized reads, study design and gene-bin names
+#' @export
 normalizeLibrary <- function(readsOut,X){
 
   input <- readsOut$reads[,1:length(readsOut$samplenames)]
@@ -78,7 +79,6 @@ normalizeLibrary <- function(readsOut,X){
 #' @title normalizePeak
 #' @param readsOut Read counts data list from countReads() function.
 #' @param X Study design or Grouping for the samples, should have 2 levels
-#' @export
 normalizePeak <- function(readsOut,X){
 
   ## load data from input

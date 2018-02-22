@@ -4,11 +4,10 @@
 #' @param gtf gtf file to build gene model
 #' @param saveName the file name to save ditribution plot
 #' @export
-
-peakDistribution <- function(bedFile,gtf,saveName = NA){
+peakDistribution <- function(peak,gtf,saveName = NA){
 
   library(GenomicFeatures)
-  peak <- read.table( bedFile ,sep = "\t",header = F)
+
 
   ## collapes the peak to the center
   x <- peak

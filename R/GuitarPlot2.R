@@ -1,5 +1,5 @@
-
-
+#' @title GuitarPlot
+#' @export
 GuitarPlot <- function(gfeatures,
                        GuitarCoordsFromTxDb=NA,
                        txdb=NA,

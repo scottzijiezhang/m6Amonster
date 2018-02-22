@@ -5,7 +5,8 @@
 #' @param exclude Names of samples to exclude (as outlier) in the test. Default is NULL
 #' @param maxPsi The cutoff value for random effect parameter Psi estimation
 #' @param mode Run test on "bin" mode or "peak" mode.
-#' @export x The RNADMethyl data list with estimators
+#' @return x The RNADMethyl data list with estimators
+#' @export
 diffIP <- function(
   x,
   Covariates = NULL, # covariates

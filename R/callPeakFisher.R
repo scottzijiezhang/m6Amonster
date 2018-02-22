@@ -4,6 +4,7 @@
 #' @param peak_cutoff_fdr The cutoff of fdr of fisher's exact test to call peak.
 #' @param peak_cutoff_oddRatio The minimal oddRatio of fisher's exact test to call peak.
 #' @param threads The number of threads to use. Default uses 1 threads.
+#' @export
 callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , peak_cutoff_oddRatio = 1, threads = 1){
   input <- as.matrix(readsOut$reads[,1:length(readsOut$samplenames)])
   m6A <- as.matrix(readsOut$reads[,(1+length(readsOut$samplenames)):(2*length(readsOut$samplenames))])
@@ -83,7 +84,6 @@ callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , p
 #' @title Fisher's exact test
 #' @param counts.m  matrix with the first column as IP counts, and second column as input counts
 #' @return data frame with p-values and odds ratio
-#' @export
 .fisher_exact_test <- function(IP, input, IP_overall, input_overall, pseudo_count=1){
 
   test.m <- matrix(c(IP, input, IP_overall, input_overall), nrow = 2, byrow = FALSE,
