@@ -92,8 +92,8 @@ getCov <- function(bf,locus, libraryType ){
 
 .getGeneModelAnno <- function(geneModel,geneName,gtf_grange,zoomIn = NULL){
   exon.current <- reduce( geneModel[geneName][[1]] )
-  startCodon <-  reduce( gtf_grange[gtf_grange$type == "start_codon" & gtf_grange$gene_name == geneName] )
-  stopCodon <- reduce( gtf_grange[gtf_grange$type == "stop_codon" & gtf_grange$gene_name == geneName] )
+  startCodon <-  reduce( gtf_grange[gtf_grange$type == "start_codon" & gtf_grange$gene_id == geneName] )
+  stopCodon <- reduce( gtf_grange[gtf_grange$type == "stop_codon" & gtf_grange$gene_id == geneName] )
   if(as.logical(strand(exon.current)[1]=="-")){
     startCodon <- startCodon[which.max( start(startCodon) )]
     stopCodon <- stopCodon[which.min( start(stopCodon) )]
@@ -107,7 +107,7 @@ getCov <- function(bf,locus, libraryType ){
     end(cdsRange) <- end(stopCodon)
     cds.current <- suppressWarnings( GenomicRanges::intersect(exon.current,cdsRange) )
   }
-  utr.current <- setdiff(exon.current,cds.current)
+  utr.current <- GenomicRanges::setdiff(exon.current,cds.current)
   exon.new <- sort( c(cds.current,utr.current) )
 
   if(is.null(zoomIn)){

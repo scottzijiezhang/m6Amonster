@@ -79,6 +79,7 @@ normalizeLibrary <- function(readsOut,X){
 #' @title normalizePeak
 #' @param readsOut Read counts data list from countReads() function.
 #' @param X Study design or Grouping for the samples, should have 2 levels
+#' @export
 normalizePeak <- function(readsOut,X){
 
   ## load data from input
