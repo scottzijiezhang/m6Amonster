@@ -80,6 +80,7 @@
 }
 
 # make Guitar Coordinates from TranscriptDb object
+#' @import rtracklayer
 .makeGuitarCoordsFromTxDb <- function(txdb,
                                      maximalAmbiguity = 3,
                                      minimalComponentLength = 100,

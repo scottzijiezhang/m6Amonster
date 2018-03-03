@@ -4,8 +4,12 @@
 \alias{qqplot.pvalue}
 \title{qqplot.pvalue}
 \usage{
-qqplot.pvalue(x)
+qqplot.pvalue(x, pointSize = 1, legendSize = 4)
 }
 \arguments{
 \item{x}{can be a vector (p value of one group) or a list of vector (p value of multiple groups).}
+
+\item{pointSize}{The size of data points}
+
+\item{legendSize}{The size of points in the legend}
 }

@@ -1,11 +1,12 @@
 #' @title plotMetaGene
 #' @param peak the data frame of peak in bed12 format.
 #' @param gtf The annotation file.
+#' @import Guitar
 #' @export
 plotMetaGene <- function(peak,gtf){
   feature <- list('peak'=.peakToGRangesList(peak) )
   txdb <- makeTxDbFromGFF(gtf,format = "gtf")
-  gc_txdb <- .makeGuitarCoordsFromTxDb(txdb, noBins=50)
+  gc_txdb <- makeGuitarCoordsFromTxDb(txdb, noBins=50)
   GuitarCoords <- gc_txdb
   m <- .countGuitarDensity(
     feature[[1]],
@@ -108,15 +109,17 @@ plotMetaGene <- function(peak,gtf){
 #' @param gtf The annotation file for the gene model.
 #' @param saveToPDFprefix Set a name to save the plot to PDF.
 #' @param includeNeighborDNA Whether to include upstrean and downstream region in the meta gene.
+#' @import Guitar
+#' @export
 plotMetaGeneMulti <- function(peakList,gtf,saveToPDFprefix=NA,
                               includeNeighborDNA=FALSE){
 
   gfeature <- lapply(peakList,.peakToGRangesList)
   names(gfeature) <- names(peakList)
   txdb <- makeTxDbFromGFF(gtf,format = "gtf")
-  gc_txdb <- .makeGuitarCoordsFromTxDb(txdb, noBins=50)
+  gc_txdb <- makeGuitarCoordsFromTxDb(txdb, noBins=50)
 
-  GuitarPlot(gfeature, GuitarCoordsFromTxDb = gc_txdb,saveToPDFprefix=saveToPDFprefix,
+  GuitarPlotNew(gfeature, GuitarCoordsFromTxDb = gc_txdb,saveToPDFprefix=saveToPDFprefix,
              includeNeighborDNA=includeNeighborDNA)
 
 }

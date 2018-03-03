@@ -1,6 +1,6 @@
-#' @title GuitarPlot
+#' @title GuitarPlotNew
 #' @export
-GuitarPlot <- function(gfeatures,
+GuitarPlotNew <- function(gfeatures,
                        GuitarCoordsFromTxDb=NA,
                        txdb=NA,
                        genome=NA,
@@ -80,7 +80,7 @@ GuitarPlot <- function(gfeatures,
   if (returnCount) {return(ct)}
 }
 
-
+#' @import GenomicRanges
 .countGuitarDensity <- function(peak,GuitarCoords,maximalFeatureAmbiguity) {
 
   # count overlaps
