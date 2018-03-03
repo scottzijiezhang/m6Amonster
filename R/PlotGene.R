@@ -135,17 +135,21 @@ getCov <- function(bf,locus, libraryType ){
     zoomIn.gr <- cdsRange
     ranges(zoomIn.gr) <- IRanges(start = zoomIn[1],end = zoomIn[2])
     exon.zoom <- GenomicRanges::intersect(exon.new, zoomIn.gr)
-    cds.id <- unique( queryHits( findOverlaps(exon.zoom, cds.current)) )
-    df.exon <- as.data.frame(exon.zoom)
+    cds.current.zoom <- GenomicRanges::intersect(exon.zoom, cds.current)
+    utr.current.zoom <- GenomicRanges::setdiff(exon.zoom,cds.current.zoom)
+    exon.zoom.new <-  sort( c(cds.current.zoom,utr.current.zoom) )
+
+    cds.id <- unique( queryHits( findOverlaps(exon.zoom.new, cds.current.zoom)) )
+    df.exon <- as.data.frame(exon.zoom.new)
     anno.exon <- character(length = length(exon.zoom))
-    for(i in 1:length(exon.zoom)){
+    for(i in 1:length(exon.zoom.new)){
       if( i %in% cds.id){
         anno.exon[i] <- paste0("annotate(\"rect\", xmin =",df.exon$start[i] ,", xmax = ",df.exon$end[i] ,", ymin = -0.08*yscale, ymax = -0.02*yscale, alpha = .99, colour = \"black\")" )
       }else{
         anno.exon[i] <- paste0("annotate(\"rect\",xmin =",df.exon$start[i] ,", xmax = ",df.exon$end[i] ,", ymin = -0.06*yscale, ymax = -0.04*yscale, alpha = .99, colour = \"black\")")
       }
     }
-    anno.intron <- character(length = length(exon.zoom)-1 )
+    anno.intron <- character(length = length(exon.zoom.new)-1 )
     if(length(anno.intron)>0){
       for(i in 1:length(anno.intron)){
         anno.intron[i] <- paste0("annotate(\"segment\", x =", df.exon$end[i] ,", xend =", df.exon$start[i+1] ,", y = -0.05*yscale, yend = -0.05*yscale, alpha = .99, colour = \"black\")")
@@ -180,14 +184,14 @@ getCov <- function(bf,locus, libraryType ){
 plotGeneMonster <- function(readsOut, geneName, libraryType = "opposite", center = "mean", GTF, ZoomIn = NULL){
   if("X" %in% names(readsOut) ){
     X <- readsOut$X
-    plotGenePair(Ctl_IP_BAM = readsOut$bamPath.ip[factor(X) == levels(factor(X))[1]],
-                 Ctl_INPUT_BAM = readsOut$bamPath.input[factor(X) == levels(factor(X))[1]],
-                 Treat_IP_BAM = readsOut$bamPath.ip[factor(X) == levels(factor(X))[2]],
-                 Treat_INPUT_BAM = readsOut$bamPath.input[factor(X) == levels(factor(X))[2]],
-                 Ctl_size.IP = readsOut$sizeFactor$ip[factor(X) == levels(factor(X))[1]],
-                 Ctl_size.INPUT = readsOut$sizeFactor$input[factor(X) == levels(factor(X))[1]],
-                 Treat_size.IP = readsOut$sizeFactor$ip[factor(X) == levels(factor(X))[2]],
-                 Treat_size.INPUT = readsOut$sizeFactor$input[factor(X) == levels(factor(X))[2]],
+    plotGenePair(Ctl_IP_BAM = readsOut$bamPath.ip[X == unique(X)[1]],
+                 Ctl_INPUT_BAM = readsOut$bamPath.input[X == unique(X)[1]],
+                 Treat_IP_BAM = readsOut$bamPath.ip[X == unique(X)[2]],
+                 Treat_INPUT_BAM = readsOut$bamPath.input[X == unique(X)[2]],
+                 Ctl_size.IP = readsOut$sizeFactor$ip[X == unique(X)[1]],
+                 Ctl_size.INPUT = readsOut$sizeFactor$input[X == unique(X)[1]],
+                 Treat_size.IP = readsOut$sizeFactor$ip[X == unique(X)[2]],
+                 Treat_size.INPUT = readsOut$sizeFactor$input[X == unique(X)[2]],
                  geneName = geneName,
                  geneModel = readsOut$geneModel,
                  libraryType = libraryType,center = center,GTF = GTF,ZoomIn = ZoomIn )
