@@ -40,7 +40,7 @@
 
   # generate GRangesList
   tx <- exonsBy(peaks, "tx",use.names=TRUE)
-  mcols(tx) <- a
+  #mcols(tx) <- a
 
   return(tx)
 }
@@ -59,14 +59,14 @@
 .spliceSingleTrans <- function(i,a,tx_start) {
   tx = a[i,]
   tx_id = i
-  exon_rank=1:as.integer(tx[10])
+  exon_rank=1:as.integer(tx[[10]])
 
   # get start
-  temp = as.integer(strsplit(as.character(tx[12]), ",")[[1]]) + tx_start[i]
+  temp = as.integer(strsplit(as.character(tx[[12]]), ",")[[1]]) + tx_start[i]
   exon_start=temp
 
   # get end
-  temp = as.integer(strsplit(as.character(tx[11]), ",")[[1]])
+  temp = as.integer(strsplit(as.character(tx[[11]]), ",")[[1]])
   temp2 = temp + exon_start - 1
   exon_end=temp2
 
