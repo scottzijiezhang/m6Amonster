@@ -13,7 +13,10 @@ reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
     geneGRList <- readsOut$geneModel
     peakGenes <- as.character(readsOut$geneBins[peak_id_pairs[,1],"gene"])
     ##
-    if("p_value3" %in% colnames(stats)){ colnames(stats)[which(colnames(stats) == "p_value3")] = "p_value"}
+    if("p_value3" %in% colnames(stats)){
+      colnames(stats)[which(colnames(stats) == "p_value3")] = "p_value"
+      colnames(stats)[which(colnames(stats) == "beta1")] = "beta"
+    }
 
     num_peaks <- nrow(peak_id_pairs)
     cat(paste("Reporting ",num_peaks," peaks...\n"))
