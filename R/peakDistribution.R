@@ -11,6 +11,7 @@ peakDistribution <- function(peak,gtf,saveName = NA){
 
   ## collapes the peak to the center
   x <- peak
+  colnames(x) <- paste0("V",1:ncol(x))
   for(i in 1:dim(x)[1]){
     start = x[i,2]
     end = x[i,3]
