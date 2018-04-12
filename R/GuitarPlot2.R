@@ -363,21 +363,6 @@ GuitarPlotNew <- function(gfeatures,
         annotate("text", x = x[1]/2, y = -0.2, label = "5'UTR") +
         annotate("text", x = x[1] + weight[2]/2, y = -0.2, label = "CDS") +
         annotate("text", x = x[2] + weight[3]/2, y = -0.2, label = "3'UTR") +
-        theme_bw() + theme(axis.ticks = element_blank(), axis.text.x = element_blank(),panel.border = element_blank(), panel.grid.major = element_blank(),
-                           panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")) +
-        geom_vline(xintercept= x[1:2], linetype="dotted") +
-        annotate("rect", xmin = 0, xmax = x[1], ymin = -0.12, ymax = -0.08, alpha = .99, colour = "black")+
-        annotate("rect", xmin = x[2], xmax = 1, ymin = -0.12, ymax = -0.08, alpha = .99, colour = "black")+
-        annotate("rect", xmin = x[1], xmax = x[2], ymin = -0.16, ymax = -0.04, alpha = .2, colour = "black")+
-        p1 <-
-        ggplot(ct1, aes(x=pos, weight=weight))  +
-        ggtitle("Distribution on mRNA") +
-        xlab("") +
-        ylab("Frequency") +
-        geom_density(adjust=1,aes(fill=factor(Feature),colour=factor(Feature)),alpha=0.2) +
-        annotate("text", x = x[1]/2, y = -0.2, label = "5'UTR") +
-        annotate("text", x = x[1] + weight[2]/2, y = -0.2, label = "CDS") +
-        annotate("text", x = x[2] + weight[3]/2, y = -0.2, label = "3'UTR") +
         geom_vline(xintercept= x[1:2], linetype="dotted") +
         annotate("rect", xmin = 0, xmax = x[1], ymin = -0.12, ymax = -0.08, alpha = .99, colour = "black")+
         annotate("rect", xmin = x[2], xmax = 1, ymin = -0.12, ymax = -0.08, alpha = .99, colour = "black")+
@@ -425,7 +410,7 @@ GuitarPlotNew <- function(gfeatures,
     }
   )
 
-  suppressWarnings( .multiplot(p1, p2, cols=2))
+  #suppressWarnings( .multiplot(p1, p2, cols=2))
 
 }
 
@@ -720,6 +705,6 @@ GuitarPlotNew <- function(gfeatures,
     }
   )
 
-  suppressWarnings( .multiplot(p1, p2, cols=2))
+  #suppressWarnings( .multiplot(p1, p2, cols=2))
 
 }
