@@ -4,10 +4,12 @@
 \alias{plotPCAfromMatrix}
 \title{plotPCAfromMatrix}
 \usage{
-plotPCAfromMatrix(m, group)
+plotPCAfromMatrix(m, group, loglink = TRUE)
 }
 \arguments{
-\item{m}{The data matrix}
+\item{m}{The matrix of count data}
 
-\item{group}{The label to group samples}
+\item{group}{The factor levels to color the samples. Should be the save number as the # of matrix columns}
+
+\item{loglink}{Logic parameter determine whether to take log of the metrix data. Default is TRUE. If your input matrix is at log scale, use FALSE.}
 }

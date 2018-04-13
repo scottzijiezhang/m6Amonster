@@ -4,7 +4,7 @@
 \alias{plotExpression}
 \title{plotExpression}
 \usage{
-plotExpression(RDM, geneName, logCount = FLASE)
+plotExpression(RDM, geneName, logCount = FALSE)
 }
 \arguments{
 \item{RDM}{The RDM object}
