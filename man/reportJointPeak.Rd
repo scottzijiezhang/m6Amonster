@@ -4,7 +4,7 @@
 \alias{reportJointPeak}
 \title{reportJointPeak}
 \usage{
-reportJointPeak(readsOut, joint_threshold, threads = 1)
+reportJointPeak(readsOut, joint_threshold = 2, threads = 1)
 }
 \arguments{
 \item{readsOut}{The data list contain peak calling result}

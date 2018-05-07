@@ -4,7 +4,7 @@
 #'  This option is useful only when joint poeak has not been reported by jointPeakCount().
 #' @return merged.report The joint peak of merged bins.
 #' @export
-reportJointPeak <- function(readsOut, joint_threshold,threads = 1){
+reportJointPeak <- function(readsOut, joint_threshold = 2,threads = 1){
   if("all.est.peak" %in% names(readsOut) & "peakCallResult"%in% names(readsOut)){
     cat("Reporting joint peak with PoissonGamma test statistics...\n")
     peak_id_pairs <- readsOut$jointPeak_id_pairs

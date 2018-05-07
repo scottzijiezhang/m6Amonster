@@ -12,6 +12,7 @@ normalizeLibrary <- function(readsOut,X){
   ## check if geneBins already exist
   if( "geneBins" %in% names(readsOut) ){
     geneBins <- readsOut$geneBins
+    gene.name <- geneBins$gene
   }else{
     ## split gene and bin names
     aa <- strsplit(rownames(input), ",")
@@ -26,12 +27,9 @@ normalizeLibrary <- function(readsOut,X){
   }
 
   ## Get input geneSum (gene level quantification)
-  geneSum <- NULL
-  for(i in 1:ncol(input) ){
-    y <- input[,i]
-    gene.sum <- tapply(y,gene.name,sum)
-    geneSum <- cbind(geneSum,gene.sum)
-  }
+  geneSum <- apply(input,2,function(y){
+    tapply(y,gene.name,sum)
+  })
   colnames(geneSum) <- readsOut$samplenames
 
   size.input <- DESeq2::estimateSizeFactorsForMatrix(geneSum)
