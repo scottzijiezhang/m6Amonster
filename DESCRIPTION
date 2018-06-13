@@ -1,9 +1,9 @@
 Package: m6Amonster
 Type: Package
 Title: Analyze m6A seq data
-Version: 0.1.2
+Version: 0.1.3
 Author: Zijie Zhang
-Maintainer: The package maintainer <yourself@somewhere.net>
+Maintainer: The package maintainer <scottzjzhang@uchicago.edu>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
