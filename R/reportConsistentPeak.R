@@ -27,8 +27,14 @@ reportConsistentPeak <- function(readsOut, samplenames ,joint_threshold=NULL,thr
 
     ## Get joint peak
     geneBins <- readsOut$geneBins
+
     ## set logic vector for joint peak
-    ID <- (rowSums(readsOut$peakCallResult[,sample_report_id]) >= joint_threshold)
+    if(length(sample_report_id) >1 ){
+      ID <- (rowSums(readsOut$peakCallResult[,sample_report_id]) >= joint_threshold)
+    }else if(length(sample_report_id) == 1){
+      ID <- readsOut$peakCallResult[,sample_report_id]
+    }
+
     num_lines <- length(ID)
 
     # start ids of checkpoints
@@ -53,11 +59,19 @@ reportConsistentPeak <- function(readsOut, samplenames ,joint_threshold=NULL,thr
     ## Get raw readcount for peaks.
     m6A <- readsOut$reads[,(length(readsOut$samplenames)+sample_report_id)]
     input <- readsOut$reads[,sample_report_id]
-    size.m6A <-  colSums(m6A)/mean( colSums(m6A))
-    input.size <-  colSums(input)/mean( colSums(input))
+    ## standardize library size
+    all.size <- colSums( cbind(input,m6A) )/mean( colSums( cbind(input,m6A) ) )
 
-    ip_sum <- round( rowSums( t( t(m6A)/size.m6A ) ) )
-    input_sum <- round(rowSums( t( t(input)/size.m6A ) ) )
+    if(length(sample_report_id) >1 ){
+      ## get Summed read count
+      ip_sum <- round( rowSums( t( t(m6A)/all.size[ length(sample_report_id)+1:length(sample_report_id) ] ) ) )
+      input_sum <- round(rowSums( t( t(input)/all.size[ 1:length(sample_report_id) ] ) ) )
+    }else if(length(sample_report_id) == 1){
+      ## No need to sum for single sample
+      ip_sum <- round( m6A/all.size[2] )
+      input_sum <- round( input/all.size[1] )
+    }
+
 
     ## Get peak ip count
     joint_peak_ip <- apply(peak_id_pairs,1,function(x,y){
