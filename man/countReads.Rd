@@ -4,26 +4,26 @@
 \alias{countReads}
 \title{countReads}
 \usage{
-countReads(samplenames, gtf, shift = 75, bamFolder, outputDir = NA,
-  modification = "m6A", binSize = 50, strandToKeep = "opposite",
-  threads = 1)
+countReads(samplenames, gtf, fragmentLength = 150, bamFolder,
+  outputDir = NA, modification = "m6A", binSize = 50,
+  strandToKeep = "opposite", paired = FALSE, threads = 1)
 }
 \arguments{
 \item{samplenames}{The names of each sample (prefix for bam files)}
 
 \item{gtf}{The gtf format gene annotation file}
 
-\item{shift}{Number of bp to shift when counting the reads. This is usually half of the fragment length.}
+\item{fragmentLength}{The RNA fragment length (insert size of the library).}
 
 \item{bamFolder}{Path to the folder where bam file locates}
 
 \item{outputDir}{The directory to save output files}
 
-\item{modification}{The postfix of IP sample bam file. For example "IP" for s1.IP.bam and "m6A" for s1.m6A.bam.}
-
 \item{binSize}{The size of consecutive bins to slice the transcripts}
 
 \item{strandToKeep}{According to library preparation protocol, choose which strand to count. Stranded RNA library usually seq the "ooposite" strand. Small RNA library seq the "same" strand.}
+
+\item{paired}{Logical indicating whether the input bam files are from paired end sequencing. Default is FALSE. If using paired end data, the read length will be estimated from the data and only good mate are counted.}
 
 \item{threads}{The number of threads to use for hyperthreading}
 }
