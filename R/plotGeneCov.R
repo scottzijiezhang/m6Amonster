@@ -217,11 +217,11 @@ getCov <- function(bf,locus, libraryType ){
       }
     }
     ## When there is only one exon and zoomIn range spans intron
-    if( length(exon.zoom.new) > 0 & start(zoomIn.gr)<start(exon.zoom)[1]){
+    if( length(exon.zoom.new) > 0 && start(zoomIn.gr)<start(exon.zoom)[1]){
       anno.intron <- c(paste0("annotate(\"segment\", x =", start(zoomIn.gr) ,", xend =", start(exon.zoom)[1] ,", y = -0.05*yscale, yend = -0.05*yscale, alpha = .99, colour = \"black\")"),
                        anno.intron)
     }
-    if( length(exon.zoom.new) > 0 & end(zoomIn.gr) > end(exon.zoom)[length(exon.zoom)] ){
+    if( length(exon.zoom.new) > 0 && end(zoomIn.gr) > end(exon.zoom)[length(exon.zoom)] ){
       anno.intron <- c(anno.intron,
                        paste0("annotate(\"segment\", x =", end(exon.zoom)[length(exon.zoom)] ,", xend =", end(zoomIn.gr) ,", y = -0.05*yscale, yend = -0.05*yscale, alpha = .99, colour = \"black\")") )
     }
