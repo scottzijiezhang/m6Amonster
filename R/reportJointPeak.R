@@ -5,7 +5,7 @@
 #' @return merged.report The joint peak of merged bins.
 #' @export
 reportJointPeak <- function(readsOut, joint_threshold = 2,threads = 1){
-  if("all.est.peak" %in% names(readsOut) & "peakCallResult"%in% names(readsOut)){
+  if("all.est.peak" %in% names(readsOut) & "peakCallResult"%in% names(readsOut) ){
     cat("Reporting joint peak with PoissonGamma test statistics...\n")
     peak_id_pairs <- readsOut$jointPeak_id_pairs
 
@@ -55,6 +55,49 @@ reportJointPeak <- function(readsOut, joint_threshold = 2,threads = 1){
     }
     return( merged.report )
 
+  }else if( "jointPeak_id_pairs" %in% names(readsOut) & "peakCallResult"%in% names(readsOut)){
+    cat("Reporting joint peak without differential peak test...\n")
+    geneBins <- readsOut$geneBins
+    peak_id_pairs <- readsOut$jointPeak_id_pairs
+
+    num_peaks <- nrow(peak_id_pairs)
+    geneGRList <- readsOut$geneModel
+    peakGenes <- as.character(geneBins[peak_id_pairs[,1],"gene"])
+
+    if (num_peaks == 0){return(data.frame())
+    }else {
+      start_time <- Sys.time()
+      registerDoParallel(cores = threads)
+      cat(paste("Hyper-thread registered:",getDoParRegistered(),"\n"))
+      cat(paste("Using",getDoParWorkers(),"thread(s) to report merged report...\n"))
+      merged.report<- foreach( p = 1:num_peaks, .combine = rbind)%dopar%{
+        peak_row_id <- peak_id_pairs[p,]
+        geneExons <- reduce ( geneGRList[peakGenes[p]][[1]] )
+
+        peak <- .getPeakBins(geneGRList,peakGenes[p],c(geneBins$bin[peak_row_id[1]],geneBins$bin[peak_row_id[2]]),readsOut$binSize )
+
+        peakE <- .peakExons(peak,as.data.frame(geneExons))
+        data.frame(chr=peak$chr,
+                   start = peak$start,
+                   end = peak$end,
+                   name = peakGenes[p],
+                   score = 0,
+                   strand = as.character(strand(geneExons))[1],
+                   thickStart = peak$start,
+                   thickEnd = peak$end,
+                   itemRgb=0,
+                   blockCount = nrow(peakE),
+                   blockSizes = paste(peakE$width,collapse=","),
+                   blockStarts = paste(peakE$start - replicate(nrow(peakE),peakE$start[1]),collapse=",")
+        )
+      }
+      rm(list=ls(name=foreach:::.foreachGlobals), pos=foreach:::.foreachGlobals)
+      end_time <- Sys.time()
+      cat(paste("Time used to report peaks:",difftime(end_time, start_time, units = "mins"),"mins... \n"))
+    }
+
+    return( merged.report )
+
   }else if("peakCallResult"%in% names(readsOut)){
     cat("Reporting joint peak without differential peak test...\n")
     ## Get joint peak
@@ -83,7 +126,7 @@ reportJointPeak <- function(readsOut, joint_threshold = 2,threads = 1){
     #geneBins <- .getGeneBins(geneGRList,peakGenes,readsOut$binSize )
 
     if (num_peaks == 0){return(data.frame())
-    }else {
+    }else{
       start_time <- Sys.time()
       registerDoParallel(cores = threads)
       cat(paste("Hyper-thread registered:",getDoParRegistered(),"\n"))

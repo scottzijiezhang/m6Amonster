@@ -10,4 +10,6 @@ getTPM(x, meanFragmentLength = 150, normalize = T)
 \item{x}{The m6Amonster object}
 
 \item{meanFragmentLength}{The mean length of RNA fragment (insert of RNA library). Default is 150bp.}
+
+\item{normalize}{Logical indicating whether normalized TPM or raw TPM should be returned.}
 }

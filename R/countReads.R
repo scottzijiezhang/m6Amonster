@@ -5,7 +5,7 @@
 #' @param samplenames The names of each sample (prefix for bam files)
 #' @param gtf The gtf format gene annotation file
 #' @param fragmentLength The RNA fragment length (insert size of the library).
-#' @param modification
+#' @param modification The modification used to name the BAM files.
 #' @param bamFolder Path to the folder where bam file locates
 #' @param binSize The size of consecutive bins to slice the transcripts
 #' @param threads The number of threads to use for hyperthreading

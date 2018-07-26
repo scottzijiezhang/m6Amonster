@@ -19,6 +19,8 @@ countReads(samplenames, gtf, fragmentLength = 150, bamFolder,
 
 \item{outputDir}{The directory to save output files}
 
+\item{modification}{The modification used to name the BAM files.}
+
 \item{binSize}{The size of consecutive bins to slice the transcripts}
 
 \item{strandToKeep}{According to library preparation protocol, choose which strand to count. Stranded RNA library usually seq the "ooposite" strand. Small RNA library seq the "same" strand.}

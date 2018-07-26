@@ -1,7 +1,7 @@
 Package: m6Amonster
 Type: Package
 Title: Analyze m6A seq data
-Version: 0.1.3
+Version: 0.1.4
 Author: Zijie Zhang
 Maintainer: The package maintainer <scottzjzhang@uchicago.edu>
 Description: More about what it does (maybe more than one line)
@@ -9,6 +9,8 @@ Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-import: Guitar
-Depends: GenomicFeatures, Rsamtools, ggplot2, doParallel, foreach,grid,rtracklayer,GenomicAlignments,reshape2
+import: Guitar, stringr,vcfR
+Depends: GenomicFeatures, Rsamtools, ggplot2, doParallel, foreach,grid,rtracklayer,GenomicAlignments,reshape2,Rcpp,RcppArmadillo
 RoxygenNote: 6.0.1
+LinkingTo: Rcpp, RcppArmadillo
+Imports:Rcpp, RcppArmadillo

@@ -1,7 +1,7 @@
 #' @title getTPM
 #' @param x The m6Amonster object
 #' @param meanFragmentLength The mean length of RNA fragment (insert of RNA library). Default is 150bp.
-#' @normalize Logical indicating whether normalized TPM or raw TPM should be returned.
+#' @param  normalize Logical indicating whether normalized TPM or raw TPM should be returned.
 #' @export
 getTPM <- function(x, meanFragmentLength = 150,normalize = T){
 

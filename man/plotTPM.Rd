@@ -4,7 +4,7 @@
 \alias{plotTPM}
 \title{plotTPM}
 \usage{
-plotTPM(TPM, geneName, group, logCount = FALSE)
+plotTPM(TPM, geneName, group, logCount = FALSE, facet_grid = FALSE)
 }
 \arguments{
 \item{TPM}{Dataframe of gene TPM}
