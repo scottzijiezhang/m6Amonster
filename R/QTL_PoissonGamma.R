@@ -1,6 +1,6 @@
 #' @title QTL_PoissonGamma
 #' @param pheno The phenotype data matrix. Needs to be IP read count that has been normalized for expression level.
-#' @param vcf_file The vcf file for genotype.
+#' @param vcf_file The vcf file for genotype. The chromosome position must be sorted!!
 #' @param peak_bed The peak file in BED12 format that needs to correspond to phenotype data matrix.
 #' @param testWindow Integer. Test SNPs in <testWindow> bp window flanking the peak.
 #' @param Chromosome The chromsome to run QTL test.
@@ -18,8 +18,10 @@ QTL_PoissonGamma <- function( pheno, vcf_file, peak_bed, testWindow = 100000, Ch
   }
 
   ## set ranges on the chromosome that can be tested
-  vcfRange <- c(scan( pipe(paste0("zcat ",vcf_file," | awk '!/^#/ {print $2}' | head -n1")), quiet = T ),
-                scan( pipe(paste0("zcat ",vcf_file," | awk '!/^#/ {print $2}' | tail -n1")), quiet = T ))
+  con <- pipe(paste0("zcat ",vcf_file," | awk '!/^#/ {print $2}' | tail -n1"))
+  vcfRange <- c( read.table(gzfile(vcf_file), nrows = 1)[,2] ,
+                scan( con , quiet = T ))
+  close(con)
   ## update test Range if necessary
   if(!is.null(Range)){
     vcfRange <- intersect(IRanges(vcfRange[1],vcfRange[2]),IRanges(Range[1],Range[2]) )
@@ -31,20 +33,22 @@ QTL_PoissonGamma <- function( pheno, vcf_file, peak_bed, testWindow = 100000, Ch
   ## parse bed12 file
   colnames(peak_bed) <- c("chr","start","end","name","score","strand","thickStart","thickEnd","RGB","numBlock","blockSize","blockStart")
   peak_bed.gr <- makeGRangesFromDataFrame(peak_bed, keep.extra.columns = T)
-  peak_bed.gr <- peak_bed.gr[seqnames(peak_bed.gr) == Chromosome & (( end(peak_bed.gr)+testWindow )  > start(vcfRange) ) & (( start(peak_bed.gr)-testWindow )  < end(vcfRange) )  ]
-  phenoY <- pheno[ peak_bed$chr == Chromosome & (( peak_bed$end+testWindow )  > start(vcfRange) ) & (( peak_bed$start-testWindow )  < end(vcfRange) ) ,]
+  test.id <- which(peak_bed$chr == Chromosome & (( peak_bed$end+testWindow )  > start(vcfRange) ) & (( peak_bed$start-testWindow )  < end(vcfRange) ) )
+  peak_bed.gr <- peak_bed.gr[test.id ]
+  phenoY <- pheno[test.id,]
 
   ## test each peak
   startTime <- Sys.time()
   registerDoParallel(thread)
-  testResult <- foreach( i = 1:length(peak_bed.gr), .combine = rbind )%dopar%{
+  testResult <- foreach( i = 1:length(peak_bed.gr), .combine = rbind  )%dopar% {
+
     ## get the range where SNPs are available
     testRange <- intersect(IRanges(start(peak_bed.gr[i])-testWindow, end(peak_bed.gr[i])+testWindow ),vcfRange)
 
     ## Test association if there is SNP available for this peak
     if(length(testRange)==1){
       ## read genotype
-      system(paste0("zcat ",vcf_file," | awk '(/^#/ ) {print $0}(!/^#/ && $2 > ",start(testRange)," && $2 < ",end(testRange)," ) {print $0}'| gzip > ~/tmp",i,".vcf.gz"))
+      system(paste0("zcat ",vcf_file," | awk 'NR==1 {print $0} (/^#CHROM/){print $0}(!/^#/ && $2 > ",start(testRange)," && $2 < ",end(testRange)," ) {print $0}'| gzip > ~/tmp",i,".vcf.gz"))
       geno.vcf <- read.vcfR( file =paste0("~/tmp",i,".vcf.gz"), verbose = F )
       file.remove(paste0("~/tmp",i,".vcf.gz"))
       ## filter biallelic snps
