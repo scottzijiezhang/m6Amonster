@@ -28,4 +28,6 @@ countReads(samplenames, gtf, fragmentLength = 150, bamFolder,
 \item{paired}{Logical indicating whether the input bam files are from paired end sequencing. Default is FALSE. If using paired end data, the read length will be estimated from the data and only good mate are counted.}
 
 \item{threads}{The number of threads to use for hyperthreading}
+
+\item{sasaveOutput}{Logical option indicating whether to save output as an RDS file.}
 }

@@ -49,7 +49,14 @@ QTL_PoissonGamma <- function( pheno, vcf_file, peak_bed, testWindow = 100000, Ch
     if(length(testRange)==1){
       ## read genotype
       system(paste0("zcat ",vcf_file," | awk 'NR==1 {print $0} (/^#CHROM/){print $0}(!/^#/ && $2 > ",start(testRange)," && $2 < ",end(testRange)," ) {print $0}'| gzip > ~/tmp",i,".vcf.gz"))
-      geno.vcf <- read.vcfR( file =paste0("~/tmp",i,".vcf.gz"), verbose = F )
+      geno.vcf <-try(  read.vcfR( file =paste0("~/tmp",i,".vcf.gz"), verbose = F ) , silent = T)
+      ####################################################################
+      ### This is to handle a wired error in the read.vcfR function.
+      if(class(geno.vcf) == "try-error"){
+        system(paste0("zcat ",vcf_file," | awk '/^#/ {print $0} (!/^#/ && $2 > ",start(testRange)," && $2 < ",end(testRange)," ) {print $0}'| gzip > ~/tmp",i,".vcf.gz"))
+        geno.vcf <-read.vcfR( file =paste0("~/tmp",i,".vcf.gz"), verbose = F )
+      }
+      ####################################################################
       file.remove(paste0("~/tmp",i,".vcf.gz"))
       ## filter biallelic snps
       geno.vcf <- geno.vcf[is.biallelic(geno.vcf),]
@@ -75,12 +82,19 @@ QTL_PoissonGamma <- function( pheno, vcf_file, peak_bed, testWindow = 100000, Ch
 
         ## Post process estimations
         tested.id <- match(rownames(tmp_est),geno.vcf@fix[,"ID"])
+        ## calculate distance with respect to transcript(gene) strand
+        distance <- if(as.character(strand(peak_bed.gr[i])) == "+"){
+          as.integer(geno.vcf@fix[tested.id,"POS"])- round((peak_bed.gr[i]$thickStart+peak_bed.gr[i]$thickEnd)/2)
+        }else{
+          round((peak_bed.gr[i]$thickStart+peak_bed.gr[i]$thickEnd)/2) - as.integer(geno.vcf@fix[tested.id,"POS"])
+          }
         report <- data.frame(
           SNP = paste(geno.vcf@fix[tested.id,"CHROM"],geno.vcf@fix[tested.id,"POS"],sep = ":"),
           SNPID = rownames(tmp_est),
           REF = geno.vcf@fix[tested.id,"REF"],
           ALT = geno.vcf@fix[tested.id,"ALT"],
           PEAK = paste0(Chromosome,":",peak_bed.gr[i]$thickStart,"-",peak_bed.gr[i]$thickEnd,"_",peak_bed.gr[i]$name,"_",strand( peak_bed.gr[i]) ),
+          DISTANCE = distance,
           beta = tmp_est[,"beta"],
           pvalue = tmp_est[,"p_value"],
           psi = tmp_est[,"psi"]
@@ -107,12 +121,19 @@ QTL_PoissonGamma <- function( pheno, vcf_file, peak_bed, testWindow = 100000, Ch
 
         ## Post process estimations
         tested.id <- match(rownames(tmp_est),geno.vcf@fix[,"ID"])
+        ## calculate distance with respect to transcript(gene) strand
+        distance <- if(as.character(strand(peak_bed.gr[i])) == "+"){
+          as.integer(geno.vcf@fix[tested.id,"POS"])- round((peak_bed.gr[i]$thickStart+peak_bed.gr[i]$thickEnd)/2)
+        }else{
+          round((peak_bed.gr[i]$thickStart+peak_bed.gr[i]$thickEnd)/2) - as.integer(geno.vcf@fix[tested.id,"POS"])
+        }
         report <- data.frame(
           SNP = paste(geno.vcf@fix[tested.id,"CHROM"],geno.vcf@fix[tested.id,"POS"],sep = ":"),
           SNPID = rownames(tmp_est),
           REF = geno.vcf@fix[tested.id,"REF"],
           ALT = geno.vcf@fix[tested.id,"ALT"],
           PEAK = paste0(Chromosome,":",peak_bed.gr[i]$thickStart,"-",peak_bed.gr[i]$thickEnd,"_",peak_bed.gr[i]$name,"_",strand( peak_bed.gr[i]) ),
+          DISTANCE = distance,
           beta = tmp_est[,"beta1"],
           pvalue = tmp_est[,"p_value3"],
           psi = tmp_est[,"psi"]

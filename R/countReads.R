@@ -11,6 +11,7 @@
 #' @param threads The number of threads to use for hyperthreading
 #' @param strandToKeep According to library preparation protocol, choose which strand to count. Stranded RNA library usually seq the "ooposite" strand. Small RNA library seq the "same" strand.
 #' @param outputDir The directory to save output files
+#' @param saveOutput Logical option indicating whether to save output as an RDS file.
 #' @param paired Logical indicating whether the input bam files are from paired end sequencing. Default is FALSE. If using paired end data, the read length will be estimated from the data and only good mate are counted.
 #' @export
 countReads<-function(
@@ -23,7 +24,8 @@ countReads<-function(
   binSize = 50,
   strandToKeep = "opposite",
   paired = FALSE,
-  threads = 1
+  threads = 1,
+  saveOutput = T
 ){
   #  library(Rsamtools)
   #  library(GenomicFeatures)
@@ -141,7 +143,10 @@ countReads<-function(
                    'bamPath.input' = bamPath.input, 'bamPath.ip' = bamPath.IP,
                    'samplenames' = samplenames)
 
-  saveRDS(data.out,paste0(outputDir,"/m6Amonster_readCounts.RDS"))
+  if(saveOutput){
+    saveRDS(data.out,paste0(outputDir,"/m6Amonster_readCounts.RDS"))
+  }
+
 
   return(data.out)
 }

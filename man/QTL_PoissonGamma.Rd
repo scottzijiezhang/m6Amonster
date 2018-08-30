@@ -10,7 +10,7 @@ QTL_PoissonGamma(pheno, vcf_file, peak_bed, testWindow = 1e+05, Chromosome,
 \arguments{
 \item{pheno}{The phenotype data matrix. Needs to be IP read count that has been normalized for expression level.}
 
-\item{vcf_file}{The vcf file for genotype.}
+\item{vcf_file}{The vcf file for genotype. The chromosome position must be sorted!!}
 
 \item{peak_bed}{The peak file in BED12 format that needs to correspond to phenotype data matrix.}
 
