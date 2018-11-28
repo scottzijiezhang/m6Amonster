@@ -5,7 +5,7 @@
 #' @param peak_cutoff_oddRatio The minimal oddRatio of fisher's exact test to call peak.
 #' @param threads The number of threads to use. Default uses 1 threads.
 #' @export
-callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , peak_cutoff_oddRatio = 1, threads = 1){
+callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , peak_cutoff_oddRatio = 1, enrichThreshold = 1 ,threads = 1){
   input <- as.matrix(readsOut$reads[,1:length(readsOut$samplenames)])
   m6A <- as.matrix(readsOut$reads[,(1+length(readsOut$samplenames)):(2*length(readsOut$samplenames))])
   T0 <- colSums(input)
@@ -53,7 +53,7 @@ callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , p
     }
 
     above_thresh_counts <- ( (batch_input + batch_m6A) >= min_counts )
-    enrichReads <- ( t(t(batch_m6A)/T1) / t(t(batch_input)/T0) > 1  )
+    enrichReads <- ( t(t(batch_m6A)/T1) / t(t(batch_input)/T0) > enrichThreshold  )
     fisher_exact_test_fdr <- matrix(1,nrow = nrow(fisher_exact_test_p),ncol = ncol(fisher_exact_test_p))
     if(sum(rowSums(above_thresh_counts)> (length(overall_input)/2))>1){
       fisher_exact_test_fdr[rowSums(above_thresh_counts)> (length(overall_input)/2) ,] <- apply(fisher_exact_test_p[which(rowSums(above_thresh_counts)> (length(overall_input)/2)) ,] , 2, p.adjust, method = 'fdr')

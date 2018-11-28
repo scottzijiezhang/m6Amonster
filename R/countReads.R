@@ -143,10 +143,6 @@ countReads<-function(
                    'bamPath.input' = bamPath.input, 'bamPath.ip' = bamPath.IP,
                    'samplenames' = samplenames)
 
-  if(saveOutput){
-    saveRDS(data.out,paste0(outputDir,"/m6Amonster_readCounts.RDS"))
-  }
-
 
   return(data.out)
 }
