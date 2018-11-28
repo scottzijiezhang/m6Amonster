@@ -8,6 +8,8 @@
 callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , peak_cutoff_oddRatio = 1, threads = 1){
   input <- as.matrix(readsOut$reads[,1:length(readsOut$samplenames)])
   m6A <- as.matrix(readsOut$reads[,(1+length(readsOut$samplenames)):(2*length(readsOut$samplenames))])
+  T0 <- colSums(input)
+  T1 <- colSums(m6A)
   colnames(input) <- colnames(m6A) <- readsOut$samplenames
   ## check if geneBins already exist
   if( "geneBins" %in% names(readsOut) ){
@@ -51,7 +53,7 @@ callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , p
     }
 
     above_thresh_counts <- ( (batch_input + batch_m6A) >= min_counts )
-
+    enrichReads <- ( t(t(batch_m6A)/T1) / t(t(batch_input)/T0) > 1  )
     fisher_exact_test_fdr <- matrix(1,nrow = nrow(fisher_exact_test_p),ncol = ncol(fisher_exact_test_p))
     if(sum(rowSums(above_thresh_counts)> (length(overall_input)/2))>1){
       fisher_exact_test_fdr[rowSums(above_thresh_counts)> (length(overall_input)/2) ,] <- apply(fisher_exact_test_p[which(rowSums(above_thresh_counts)> (length(overall_input)/2)) ,] , 2, p.adjust, method = 'fdr')
@@ -59,7 +61,7 @@ callPeakFisher <- function(readsOut, min_counts = 15, peak_cutoff_fdr = 0.05 , p
 
     fisher_exact_test_peak <- (fisher_exact_test_fdr < peak_cutoff_fdr &
                                  fisher_exact_test_oddRatio > peak_cutoff_oddRatio &
-                                 above_thresh_counts)
+                                 above_thresh_counts & enrichReads)
 
     fisher_exact_test_peak
   }
