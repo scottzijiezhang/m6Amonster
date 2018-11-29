@@ -1,4 +1,4 @@
-#' @title callPeakFisher
+#' @title callPeakBinomial
 #' @param readsOut The list object of countReads function.
 #' @param min_counts The minimal number of reads present in a bin to be called a peak.
 #' @param peak_cutoff_fdr The cutoff of fdr of fisher's exact test to call peak.
