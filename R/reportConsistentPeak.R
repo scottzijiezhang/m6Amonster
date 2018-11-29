@@ -92,12 +92,14 @@ reportConsistentPeak <- function(readsOut, samplenames ,joint_threshold=NULL,thr
     },y = input_sum)
 
     ## Get peak gene ip median
-    joint_peak_ip_median <-  round( tapply(ip_sum,geneBins$gene,median)[peakGenes]  )
+#    joint_peak_ip_median <-  round( tapply(ip_sum,geneBins$gene,median)[peakGenes]  )
     ## Get peak gene input median
-    joint_peak_input_median <- round( tapply(input_sum,geneBins$gene,median)[peakGenes]  )
+#    joint_peak_input_median <- round( tapply(input_sum,geneBins$gene,median)[peakGenes]  )
 
     ## Compute fisher's test for each peak
-    peak_test <- do.call( rbind.data.frame, apply(cbind(joint_peak_ip,joint_peak_input,joint_peak_ip_median,joint_peak_input_median), 1, function(x){.fisher_exact_test(x[1],x[2],x[3],x[4])}) )
+#    peak_test <- do.call( rbind.data.frame, apply(cbind(joint_peak_ip,joint_peak_input,joint_peak_ip_median,joint_peak_input_median), 1, function(x){.fisher_exact_test(x[1],x[2],x[3],x[4])}) )
+    peak_test <- data.frame(pvalue = .Bino_test( joint_peak_ip, joint_peak_input, sum(ip_sum), sum(input_sum) ),
+                            odds_ratio = (joint_peak_ip/sum(ip_sum))/(joint_peak_input/sum(input_sum)) )
 
     if (num_peaks == 0){return(data.frame())
     }else {
