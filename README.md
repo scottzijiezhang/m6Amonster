@@ -24,3 +24,4 @@ countReads(
   threads = 1 # number of thread to use 
 )
 ```
+Now all the functions of **_m6Amonster_ have migrated** to a new package **_MeRIPtools_** with newly implemented intermediate data management.**
