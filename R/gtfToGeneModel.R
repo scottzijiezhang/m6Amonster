@@ -24,7 +24,7 @@ gtfToGeneModel = function(gtf){
   resol_ambi_genes = lapply(ambi_genes,function(x){ return(x[1])  })
 
   #deal with ambiguous chromosome
-  wantedChrom=unique(sapply(single_strand_genes$tx_chrom,unlist) )[nchar(unique(sapply(single_strand_genes$tx_chrom,unlist) )) <=5]
+  wantedChrom=unique(sapply(single_strand_genes$tx_chrom,unlist) )[nchar(unique(sapply(single_strand_genes$tx_chrom,unlist) )) <=6]
   id = which(sapply(single_strand_genes$tx_chrom,unlist) %in% wantedChrom )
   wantedGeneNames = names(single_strand_genes[id])
 

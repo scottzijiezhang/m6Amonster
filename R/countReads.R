@@ -107,10 +107,15 @@ countReads<-function(
 
     #creat center points of continuous window
     if(exon.length <= binSize){
-      slidingStart= exon.length/2
-      #mapping = data.frame(start = RNA2DNA[slidingStart-exon.length/2+1], end = RNA2DNA[slidingStart + exon.length/2]  )
+      slidingStart = 1
     }else{
-      slidingStart= round(seq(from = binSize/2, to = (exon.length - binSize/2), length.out = ceiling(exon.length/binSize) ) )
+      ## use the 3' end terminal bin as a elastic-size bin
+      if(dna.range$strand == "+"){
+        slidingStart = seq(from = 1, to = ( exon.length - binSize - exon.length %% binSize + 1) , length.out = floor(exon.length/binSize) )
+      }else{ # make the first bin elastic bin if a gene is on reverse strand
+        slidingStart = c(1, seq(from = binSize + exon.length %% binSize + 1, to = ( exon.length - binSize + 1) , length.out = floor(exon.length/binSize) - 1 )  )
+      }
+      #slidingStart = round(seq(from = binSize/2, to = (exon.length - binSize/2), length.out = ceiling(exon.length/binSize) ) )
       #mapping = data.frame(start = RNA2DNA[slidingStart - binSize/2 +1], end = RNA2DNA[slidingStart + binSize/2 ]  )
     }
 
